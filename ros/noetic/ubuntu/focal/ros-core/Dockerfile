@@ -2,18 +2,17 @@
 # generated from docker_images/create_ros_core_image.Dockerfile.em
 FROM ubuntu:focal
 
-RUN mirror_url=mirror.sjtu.edu.cn && \
 
-# ubuntu 20.04 LTS
- sed -i "s/security.ubuntu.com/$mirror_url/" /etc/apt/sources.list && \
- sed -i "s/archive.ubuntu.com/$mirror_url/" /etc/apt/sources.list && \
- sed -i "s/security-cdn.ubuntu.com/$mirror_url/" /etc/apt/sources.list && \
- apt-get update && apt-get upgrade -y
 
-RUN apt-get install -y ca-certificates
+RUN mirror_url=mirrors.aliyun.com && \
+    sed -i "s/security.ubuntu.com/$mirror_url/" /etc/apt/sources.list && \
+    sed -i "s/archive.ubuntu.com/$mirror_url/" /etc/apt/sources.list && \
+    sed -i "s/security-cdn.ubuntu.com/$mirror_url/" /etc/apt/sources.list && \
+    apt-get update
 
- # setup sources.list
+RUN apt-get install -y ca-certificates apt-utils bash
 
+# setup sources.list
 
 
 # setup timezone
@@ -30,7 +29,7 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
     lsb-release \
     && rm -rf /var/lib/apt/lists/*
 
-RUN sh -c '. /etc/lsb-release && echo "deb http://mirrors.sjtug.sjtu.edu.cn/ros/ubuntu/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros1-latest.list' 
+RUN sh -c '. /etc/lsb-release && echo "deb http://mirrors.ustc.edu.cn/ros/ubuntu/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros-latest.list'
 
 # setup keys
 RUN apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
@@ -42,7 +41,7 @@ ENV LC_ALL C.UTF-8
 ENV ROS_DISTRO noetic
 
 # install ros packages
-RUN apt-get update && apt-get install -y --no-install-recommends ros-noetic-desktop-full \
+RUN apt-get update && apt-get install -y --no-install-recommends ros-noetic-ros-core \
     && rm -rf /var/lib/apt/lists/*
 
 # setup entrypoint
